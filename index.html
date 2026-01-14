@@ -1,578 +1,96 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Speed Drift - Elite Edition</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Inter:wght@300;600;800&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      :root {
-        --bg-dark: #0a0b10;
-        --panel-bg: rgba(17, 19, 26, 0.9);
-        --accent-blue: #00d2ff;
-        --accent-gold: #ffcc00;
-        --accent-red: #ff416c;
-        --text-main: #e0e6ed;
-        --glass-border: rgba(255, 255, 255, 0.05);
-      }
-
-      body {
-        font-family: "Inter", sans-serif;
-        background-color: var(--bg-dark);
-        background-image: linear-gradient(
-            rgba(0, 210, 255, 0.03) 1px,
-            transparent 1px
-          ),
-          linear-gradient(90deg, rgba(0, 210, 255, 0.03) 1px, transparent 1px);
-        background-size: 40px 40px;
-        color: var(--text-main);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-        margin: 0;
-        padding: 10px;
-        box-sizing: border-box;
-      }
-
-      .wrapper {
-        background: var(--panel-bg);
-        backdrop-filter: blur(20px);
-        border: 1px solid var(--glass-border);
-        border-radius: 32px;
-        width: 100%;
-        max-width: 480px;
-        padding: 30px;
-        box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8);
-        text-align: center;
-      }
-
-      .uc-badge {
-        background: rgba(255, 204, 0, 0.1);
-        color: var(--accent-gold);
-        padding: 8px 16px;
-        border-radius: 50px;
-        font-weight: 800;
-        border: 1px solid rgba(255, 204, 0, 0.2);
-        font-family: "Orbitron", sans-serif;
-        display: inline-block;
-        margin-bottom: 20px;
-      }
-
-      .main-display {
-        position: relative;
-        width: 180px;
-        height: 180px;
-        margin: 0 auto 30px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-        border-radius: 50%;
-        border: 2px solid rgba(255, 255, 255, 0.05);
-        background: radial-gradient(
-          circle,
-          rgba(255, 255, 255, 0.02) 0%,
-          transparent 70%
-        );
-      }
-
-      .speed-value {
-        font-family: "Orbitron", sans-serif;
-        font-size: 5rem;
-        font-weight: 900;
-        color: #fff;
-        z-index: 2;
-      }
-
-      .spin-white {
-        border-color: #fff !important;
-        box-shadow: 0 0 30px #fff !important;
-        animation: blink 0.2s infinite alternate;
-      }
-      .spin-blue {
-        border-color: var(--accent-blue) !important;
-        box-shadow: 0 0 40px var(--accent-blue) !important;
-      }
-      .spin-gold {
-        border-color: var(--accent-gold) !important;
-        box-shadow: 0 0 50px var(--accent-gold) !important;
-        transform: scale(1.05);
-      }
-      .spin-red {
-        border-color: var(--accent-red) !important;
-        box-shadow: 0 0 40px var(--accent-red) !important;
-      }
-
-      @keyframes blink {
-        from {
-          opacity: 1;
-        }
-        to {
-          opacity: 0.6;
-        }
-      }
-
-      .rail {
-        margin: 40px 0;
-        position: relative;
-        padding: 0 10px;
-      }
-      .rail-bg {
-        height: 6px;
-        background: rgba(255, 255, 255, 0.05);
-        border-radius: 3px;
-        position: relative;
-      }
-      .rail-fill {
-        position: absolute;
-        height: 100%;
-        width: 0%;
-        background: linear-gradient(
-          90deg,
-          var(--accent-blue),
-          var(--accent-gold)
-        );
-        transition: width 0.8s ease;
-        border-radius: 3px;
-      }
-
-      .dot {
-        position: absolute;
-        top: 50%;
-        width: 12px;
-        height: 12px;
-        background: #1a1c2c;
-        border: 2px solid #333;
-        border-radius: 50%;
-        transform: translate(-50%, -50%);
-        transition: 0.3s;
-      }
-      .dot.active {
-        background: var(--accent-gold);
-        border-color: #fff;
-        box-shadow: 0 0 10px var(--accent-gold);
-      }
-      .label {
-        position: absolute;
-        top: 18px;
-        left: 50%;
-        transform: translateX(-50%);
-        font-size: 0.6rem;
-        color: #555;
-        font-weight: 800;
-        white-space: nowrap;
-      }
-      .dot.active .label {
-        color: #fff;
-      }
-
-      .actions {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-      }
-      button {
-        padding: 18px;
-        border: none;
-        border-radius: 16px;
-        font-weight: 800;
-
-        cursor: pointer;
-        transition: 0.2s;
-        font-size: 1rem;
-      }
-      button:active {
-        transform: scale(0.96);
-      }
-      button:disabled {
-        opacity: 0.2;
-        cursor: not-allowed;
-      }
-
-      .btn-blue {
-        background: linear-gradient(135deg, #00d2ff, #3a7bd5);
-        color: #fff;
-        box-shadow: 0 8px 20px rgba(0, 210, 255, 0.3);
-      }
-      .btn-dark {
-        background: rgba(255, 255, 255, 0.05);
-        color: #888;
-        border: 1px solid var(--glass-border);
-      }
-      .btn-dark:hover:not(:disabled) {
-        color: #fff;
-        background: rgba(255, 255, 255, 0.1);
-      }
-
-      .log-box {
-        height: 80px;
-        overflow-y: auto;
-        background: rgba(0, 0, 0, 0.3);
-        border-radius: 12px;
-        margin-top: 20px;
-        padding: 10px;
-        font-size: 0.8rem;
-        text-align: left;
-        color: #666;
-        border: 1px solid #222;
-      }
-
-      .info-btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        border: 1px solid rgba(255, 255, 255, 0.06);
-        background: rgba(255, 255, 255, 0.02);
-        color: var(--text-main);
-        font-weight: 600;
-        margin-left: 12px;
-        cursor: pointer;
-        background: rgb(236, 233, 233);
-        color: black;
-      }
-      .info-btn:hover {
-        background: rgba(255, 255, 255, 0.479);
-      }
-
-      .info-modal {
-        position: fixed;
-        inset: 0;
-        display: none;
-        align-items: center;
-        justify-content: center;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 60;
-      }
-      .info-modal[aria-hidden="false"] {
-        display: flex;
-      }
-      .info-panel {
-        background: linear-gradient(
-          180deg,
-          rgba(20, 22, 30, 0.98),
-          rgba(17, 19, 26, 0.98)
-        );
-        border-radius: 12px;
-        padding: 18px 18px 14px 18px;
-        width: 92%;
-        max-width: 420px;
-        color: var(--text-main);
-        position: relative;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
-        border: 1px solid rgba(255, 255, 255, 0.04);
-        text-align: left;
-        font-size: 0.95rem;
-      }
-      .info-panel h3 {
-        margin: 0 0 8px 0;
-        font-family: "Orbitron", sans-serif;
-      }
-      .info-panel ul {
-        margin: 8px 0 6px 18px;
-      }
-      .info-panel .info-footer {
-        margin-top: 10px;
-        color: #888;
-        font-size: 0.8rem;
-      }
-      .close-btn {
-        position: absolute;
-        right: 10px;
-        top: 10px;
-        background: transparent;
-        border: none;
-        color: #aaa;
-        font-size: 16px;
-        cursor: pointer;
-      }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <div class="wrapper">
-      <div class="uc-badge">UC: <span id="uc-val">0</span></div>
-      <button class="info-btn" onclick="showInfo()" aria-label="Thông tin">
-        i
-      </button>
-
-      <div class="main-display" id="meter">
-        <div class="speed-value" id="speed-txt">0</div>
+      <div class="header-bar">
+        <div class="uc-badge">Spent UC: <span id="uc-val">0</span></div>
+        <div class="controls">
+          <button class="icon-btn" id="soundToggle" onclick="toggleSound()" title="Sound">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+          </button>
+          <button class="icon-btn" onclick="showInfo()" title="Info">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+          </button>
+        </div>
       </div>
 
-      <div class="rail">
+      <div class="game-scene" id="gameScene">
+        <div class="wind-overlay"></div>
+        <div class="tunnel"><div class="road"></div></div>
+        <div class="car-wrapper">
+          <div class="car-mock">
+            <div class="car-body"></div>
+            <div class="taillight left"></div>
+            <div class="taillight right"></div>
+          </div>
+        </div>
+        <div class="speed-display"><div id="speed-txt">0</div></div>
+      </div>
+
+      <div class="rail-container">
         <div class="rail-bg">
           <div class="rail-fill" id="fill"></div>
-          <div class="dot" style="left: 12.5%">
-            <span class="label">1XU</span>
-          </div>
-          <div class="dot" style="left: 25%">
-            <span class="label">3XU</span>
-          </div>
-          <div class="dot" style="left: 37.5%">
-            <span class="label">DÙ</span>
-          </div>
-          <div class="dot" style="left: 50%">
-            <span class="label">CHẢO</span>
-          </div>
-          <div class="dot" style="left: 62.5%">
-            <span class="label">AWM</span>
-          </div>
-          <div class="dot" style="left: 75%">
-            <span class="label">MYTHIC</span>
-          </div>
-          <div class="dot" style="left: 87.5%">
-            <span class="label">1VÉ</span>
-          </div>
-          <div class="dot" style="left: 100%">
-            <span class="label">2VÉ</span>
-          </div>
+          <div class="dot" style="left: 12.5%"><span class="label">1XU</span></div>
+          <div class="dot" style="left: 25%"><span class="label">3XU</span></div>
+          <div class="dot" style="left: 37.5%"><span class="label">UMB</span></div>
+          <div class="dot" style="left: 50%"><span class="label">PAN</span></div>
+          <div class="dot" style="left: 62.5%"><span class="label">AWM</span></div>
+          <div class="dot" style="left: 75%"><span class="label">MYTH</span></div>
+          <div class="dot" style="left: 87.5%"><span class="label">1TIC</span></div>
+          <div class="dot" style="left: 100%"><span class="label">2TIC</span></div>
         </div>
       </div>
 
       <div class="actions">
         <div id="start-panel">
-          <button class="btn-blue" style="width: 100%" onclick="play('start')">
-            Bắt đầu ngay (60 UC)
-          </button>
+          <button class="btn-primary action-btn" id="startBtn" onclick="play('start')">START (60 UC)</button>
         </div>
-        <div
-          id="play-panel"
-          style="display: none; flex-direction: column; gap: 10px"
-        >
-          <button class="btn-blue" id="btn-safe" onclick="play('safe')">
-            Tăng tốc an toàn
-          </button>
-          <button class="btn-dark" onclick="play('free')">
-            Tăng tốc miễn phí
-          </button>
-          <button
-            class="btn-dark"
-            style="color: var(--accent-red)"
-            onclick="collect()"
-          >
-            Dừng & Nhận thưởng
-          </button>
+        <div id="play-panel" style="display: none; flex-direction: column; gap: 15px">
+          <button class="btn-primary action-btn" id="btn-safe" onclick="play('safe')">SAFE ACCEL</button>
+          <button class="btn-secondary action-btn" id="freeBtn" onclick="play('free')">FREE ACCEL</button>
+          <button class="btn-danger action-btn" id="collectBtn" onclick="collect()">STOP & COLLECT</button>
         </div>
       </div>
 
-      <div class="log-box" id="logs"></div>
+      <div class="log-container">
+        <div class="log-header">SYSTEM LOGS</div>
+        <div class="log-box" id="logs"></div>
+      </div>
 
-      <div
-        class="info-modal"
-        id="infoModal"
-        role="dialog"
-        aria-modal="true"
-        aria-hidden="true"
-      >
-        <div class="info-panel" role="document">
-          <button class="close-btn" onclick="hideInfo()" aria-label="Đóng">
-            ✕
-          </button>
-          <h3>Luật Speed Drift</h3>
+      <div class="modal-overlay" id="infoModal" aria-hidden="true">
+        <div class="modal-panel">
+          <button class="close-icon" onclick="hideInfo()">✕</button>
+          <h3>GAME RULES</h3>
           <ul>
-            <li>
-              <strong>Bắt đầu:</strong> Tốn 60 UC để khởi động và nhận 1 lượt.
-            </li>
-            <li>
-              <strong>Tăng tốc an toàn:</strong> Trả UC theo cấp
-              (<code>COSTS</code>) để thử tăng speed, ~20% cơ hội thắng. Sau 3
-              lần hụt liên tiếp, lần tiếp theo đảm bảo thắng.
-            </li>
-            <li>
-              <strong>Tăng tốc miễn phí:</strong> Không mất UC, nhưng thất bại
-              sẽ trả speed về 0.
-            </li>
-            <li>
-              <strong>Nhảy speed:</strong> Có thể +1, +2 hoặc +3 (xác suất ~81%
-              / 18% / 1%).
-            </li>
-            <li>
-              <strong>Giải thưởng:</strong> Tùy theo speed đạt được (ví dụ: 1
-              Xu, 3 Xu, Dù, Chảo, AWM, Mythic, Vé).
-            </li>
+            <li><strong>Start:</strong> Cost 60 UC to launch.</li>
+            <li><strong>Safe Accel:</strong> Pay UC to protect progress. Guaranteed win after 3 fails.</li>
+            <li><strong>Free Accel:</strong> No cost, but failure resets to 0.</li>
+            <li><strong>Jumps:</strong> Chance to skip +1, +2 or +3 levels.</li>
           </ul>
-          <div class="info-footer">Nhấn bên ngoài hoặc phím Esc để đóng.</div>
         </div>
       </div>
 
-      <audio id="accelSound" preload="auto">
-        <source src="./sounds/accel_sound.m4a" type="audio/mp4" />
-      </audio>
-      <audio id="successSound" preload="auto">
-        <source src="./sounds/success_sound.m4a" type="audio/mp4" />
-      </audio>
-      <audio id="failureSound" preload="auto">
-        <source src="./sounds/failure_sound.m4a" type="audio/mp4" />
-      </audio>
+      <div class="modal-overlay" id="rewardModal" aria-hidden="true">
+        <div class="modal-panel reward-style">
+          <h2>🎉 SUCCESS!</h2>
+          <div class="reward-sub">You received:</div>
+          <div class="reward-item" id="rewardName">-</div>
+          <button class="btn-primary action-btn" onclick="closeRewardModal()">CONTINUE</button>
+        </div>
+      </div>
     </div>
 
-    <script>
-      const COSTS = [60, 60, 180, 500, 1000, 2500, 5800, 7200, 7200];
-      let speed = 0;
-      let uc = 0;
-      let failStreak = 0;
-      let busy = false;
+    <audio id="accelSound" preload="auto"><source src="./sounds/accel_sound.m4a" type="audio/mp4" /></audio>
+    <audio id="successSound" preload="auto"><source src="./sounds/success_sound.m4a" type="audio/mp4" /></audio>
+    <audio id="failureSound" preload="auto"><source src="./sounds/failure_sound.m4a" type="audio/mp4" /></audio>
 
-      function playSound(soundId) {
-        const sound = document.getElementById(soundId);
-        if (sound) {
-          sound.currentTime = 0;
-          sound.play().catch((err) => console.log("Sound play failed:", err));
-        }
-      }
-
-      async function play(mode) {
-        if (busy) return;
-        busy = true;
-
-        const meter = document.getElementById("meter");
-        const btns = document.querySelectorAll("button");
-
-        btns.forEach((b) => (b.disabled = true));
-        meter.className = "main-display spin-white";
-        addLog("Đang xử lý dữ liệu...");
-        playSound("accelSound");
-
-        await new Promise((r) => setTimeout(r, 1600));
-
-        let win = false;
-        let jump = 0;
-
-        if (mode === "start") {
-          uc += 60;
-          jump = rollJump();
-          speed = jump;
-          win = true;
-        } else {
-          if (mode === "safe") uc += COSTS[speed] || 7200;
-
-          win = Math.random() < 0.2;
-          if (mode === "safe") {
-            failStreak++;
-            if (failStreak >= 3) win = true;
-          }
-
-          if (win) {
-            failStreak = 0;
-            jump = rollJump();
-            speed = Math.min(8, speed + jump);
-          } else {
-            if (mode === "free") {
-              speed = 0;
-              failStreak = 0;
-              uc = 0;
-            }
-            jump = 0;
-          }
-        }
-
-        meter.className = "main-display";
-        if (win) {
-          meter.classList.add(jump === 1 ? "spin-blue" : "spin-gold");
-          addLog(`THÀNH CÔNG: +${jump} Speed!`, "#00d2ff");
-          playSound("successSound");
-        } else {
-          meter.classList.add("spin-red");
-          addLog(
-            mode === "free"
-              ? "THẤT BẠI: Trở về 0."
-              : `HỤT: Giữ nguyên (${failStreak}/3)`,
-            "#ff416c"
-          );
-          playSound("failureSound");
-        }
-
-        update();
-
-        setTimeout(() => {
-          busy = false;
-          meter.classList.remove("spin-blue", "spin-gold", "spin-red");
-          btns.forEach((b) => (b.disabled = false));
-          update();
-        }, 1000);
-      }
-
-      function rollJump() {
-        let r = Math.random() * 100;
-        if (r <= 1) return 3;
-        if (r <= 19) return 2;
-        return 1;
-      }
-
-      function update() {
-        document.getElementById("speed-txt").innerText = speed;
-        document.getElementById("uc-val").innerText = uc.toLocaleString();
-        document.getElementById("fill").style.width = (speed / 8) * 100 + "%";
-
-        const dots = document.querySelectorAll(".dot");
-        dots.forEach((d, i) =>
-          i < speed ? d.classList.add("active") : d.classList.remove("active")
-        );
-
-        document.getElementById("start-panel").style.display =
-          speed === 0 ? "block" : "none";
-        document.getElementById("play-panel").style.display =
-          speed === 0 ? "none" : "flex";
-        if (speed > 0)
-          document.getElementById(
-            "btn-safe"
-          ).innerText = `An toàn (${COSTS[speed]} UC)`;
-      }
-
-      function showInfo() {
-        const m = document.getElementById("infoModal");
-        m.setAttribute("aria-hidden", "false");
-      }
-      function hideInfo() {
-        const m = document.getElementById("infoModal");
-        m.setAttribute("aria-hidden", "true");
-      }
-      document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") hideInfo();
-      });
-      document.addEventListener("click", (e) => {
-        const m = document.getElementById("infoModal");
-        if (!m) return;
-        if (m.getAttribute("aria-hidden") === "false" && e.target === m)
-          hideInfo();
-      });
-
-      function addLog(txt, col) {
-        const b = document.getElementById("logs");
-        b.innerHTML =
-          `<div style="color:${col || "#555"}">▶ ${txt}</div>` + b.innerHTML;
-      }
-
-      function collect() {
-        const rewards = [
-          "",
-          "1 Xu",
-          "3 Xu",
-          "Dù",
-          "Chảo",
-          "AWM",
-          "Mythic",
-          "1 Vé xe",
-          "2 Vé xe",
-        ];
-        alert(`Bạn nhận được: ${rewards[speed]}`);
-        speed = 0;
-        failStreak = 0;
-        uc = 0;
-        update();
-        document.getElementById("logs").innerHTML = "";
-      }
-
-      update();
-    </script>
+    <script src="app.js"></script>
   </body>
 </html>
