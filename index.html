@@ -237,8 +237,8 @@
         font-weight: 600;
         margin-left: 12px;
         cursor: pointer;
-        background:rgb(236, 233, 233);
-        color :black;
+        background: rgb(236, 233, 233);
+        color: black;
       }
       .info-btn:hover {
         background: rgba(255, 255, 255, 0.479);
@@ -403,6 +403,16 @@
           <div class="info-footer">Nhấn bên ngoài hoặc phím Esc để đóng.</div>
         </div>
       </div>
+
+      <audio id="accelSound" preload="auto">
+        <source src="sounds/accel_sound.m4a" type="audio/mp4" />
+      </audio>
+      <audio id="successSound" preload="auto">
+        <source src="sounds/success_sound.m4a" type="audio/mp4" />
+      </audio>
+      <audio id="failureSound" preload="auto">
+        <source src="sounds/failure_sound.m4a" type="audio/mp4" />
+      </audio>
     </div>
 
     <script>
@@ -411,6 +421,14 @@
       let uc = 0;
       let failStreak = 0;
       let busy = false;
+
+      function playSound(soundId) {
+        const sound = document.getElementById(soundId);
+        if (sound) {
+          sound.currentTime = 0;
+          sound.play().catch((err) => console.log("Sound play failed:", err));
+        }
+      }
 
       async function play(mode) {
         if (busy) return;
@@ -422,6 +440,7 @@
         btns.forEach((b) => (b.disabled = true));
         meter.className = "main-display spin-white";
         addLog("Đang xử lý dữ liệu...");
+        playSound("accelSound");
 
         await new Promise((r) => setTimeout(r, 1600));
 
@@ -459,6 +478,7 @@
         if (win) {
           meter.classList.add(jump === 1 ? "spin-blue" : "spin-gold");
           addLog(`THÀNH CÔNG: +${jump} Speed!`, "#00d2ff");
+          playSound("successSound");
         } else {
           meter.classList.add("spin-red");
           addLog(
@@ -467,6 +487,7 @@
               : `HỤT: Giữ nguyên (${failStreak}/3)`,
             "#ff416c"
           );
+          playSound("failureSound");
         }
 
         update();
