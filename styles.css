@@ -1,3 +1,4 @@
+/* --- PHẦN CŨ GIỮ NGUYÊN --- */
 :root {
   --bg-main: #0b0d12;
   --panel-bg: #161925;
@@ -9,194 +10,112 @@
   --text-muted: #9ca3af;
   --border-color: rgba(255,255,255,0.08);
 }
-
 * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
+body { font-family: "Inter", sans-serif; background-color: var(--bg-main); color: var(--text-main); margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow: hidden; }
 
-body {
-  font-family: "Inter", sans-serif;
-  background-color: var(--bg-main);
-  color: var(--text-main);
-  margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh;
-}
-
-.wrapper {
-  background: var(--panel-bg);
-  width: 100%; max-width: 480px;
-  padding: 30px; 
-  border-radius: 24px;
-  box-shadow: 0 30px 60px -10px rgba(0, 0, 0, 0.6);
-  border: 1px solid var(--border-color);
-  display: flex; flex-direction: column; gap: 20px;
-}
-
-/* HEADER */
-.header-bar { display: flex; justify-content: space-between; align-items: center; }
-.uc-badge { 
+/* HEADER UPDATE */
+.header-bar { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+.badges { display: flex; gap: 8px; }
+.uc-badge, .ticket-badge { 
+  display: flex; align-items: center; gap: 6px;
   background: rgba(234, 179, 8, 0.1); color: var(--accent-gold); 
-  padding: 6px 14px; border-radius: 6px; font-weight: 700; font-family: 'Orbitron'; letter-spacing: 1px;
-  border: 1px solid rgba(234, 179, 8, 0.2); font-size: 0.9rem;
+  padding: 6px 12px; border-radius: 8px; font-weight: 700; font-family: 'Orbitron'; letter-spacing: 1px;
+  border: 1px solid rgba(234, 179, 8, 0.2); font-size: 0.85rem;
 }
-.controls { display: flex; gap: 8px; }
-.icon-btn {
-  background: transparent; border: 1px solid var(--border-color); color: var(--text-muted);
-  width: 36px; height: 36px; border-radius: 8px; cursor: pointer; transition: 0.2s;
+.ticket-badge { background: rgba(6, 182, 212, 0.1); color: var(--accent-cyan); border-color: rgba(6, 182, 212, 0.2); }
+.shop-btn { color: var(--accent-gold); border-color: rgba(234, 179, 8, 0.3); }
+.shop-btn:hover { background: rgba(234, 179, 8, 0.1); box-shadow: 0 0 10px rgba(234, 179, 8, 0.2); }
+
+/* --- SHOP STYLES --- */
+.shop-panel { max-width: 440px; }
+.shop-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
+.shop-item { background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; }
+.shop-item.highlight { border-color: var(--accent-gold); box-shadow: 0 0 15px rgba(234, 179, 8, 0.1); }
+
+.item-preview { height: 100px; background: #0f1119; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.car-1 { background: radial-gradient(circle, #1e293b 0%, #0f1119 100%); }
+.car-3 { background: radial-gradient(circle, #422006 0%, #0f1119 100%); }
+
+.mini-car { width: 80px; height: 35px; background: #333; border-radius: 6px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); position: relative; z-index: 2; }
+.mini-car.gold { background: linear-gradient(135deg, #fcd34d, #b45309); }
+.effect-glow { position: absolute; width: 100%; height: 100%; background: radial-gradient(circle, rgba(234, 179, 8, 0.4) 0%, transparent 70%); animation: pulse-glow 2s infinite; }
+
+.item-info { padding: 12px; text-align: center; }
+.item-info h4 { margin: 0 0 5px 0; font-size: 0.9rem; color: #fff; }
+.price-tag { font-size: 0.8rem; color: var(--accent-cyan); font-weight: 700; margin-bottom: 10px; }
+.price-tag.gold { color: var(--accent-gold); }
+
+.shop-btn-action { padding: 8px; font-size: 0.8rem; width: 100%; }
+.gold-btn { background: linear-gradient(135deg, #eab308, #a16207); box-shadow: 0 4px 10px rgba(234, 179, 8, 0.3); }
+
+/* --- GACHA ANIMATION SYSTEM (CỰC MẠNH) --- */
+.gacha-overlay {
+  position: fixed; inset: 0; z-index: 9999;
+  background: #000;
   display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; /* Mặc định ẩn */
 }
-.icon-btn:hover { background: rgba(255,255,255,0.05); color: #fff; border-color: rgba(255,255,255,0.2); }
+.gacha-overlay.active { opacity: 1; pointer-events: auto; }
 
-/* 🏎️ GAME SCENE - BẢN FULL IMMERSION */
-.game-scene {
-  position: relative; width: 100%; height: 260px; /* Cao hơn chút */
-  background: radial-gradient(circle at 50% 30%, #2d3748 0%, #111 60%); /* Tạo hiệu ứng ánh sáng cuối hầm */
-  border-radius: 16px; overflow: hidden;
-  perspective: 400px; /* Giảm perspective để nhìn gần hơn */
-  border: 1px solid var(--border-color);
-  box-shadow: inset 0 0 50px rgba(0,0,0,0.9);
+/* 1. Flash trắng lóa mắt */
+.gacha-flash {
+  position: absolute; inset: 0; background: #fff; z-index: 10000;
+  opacity: 0; pointer-events: none;
 }
+.gacha-overlay.animate .gacha-flash { animation: flash-bang 3s ease-out forwards; }
 
-/* Container cho cả Hầm */
-.tunnel {
-  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-  transform-style: preserve-3d;
+/* 2. God Rays (Tia nắng thần thánh) */
+.god-rays {
+  position: absolute; width: 200vmax; height: 200vmax;
+  background: repeating-conic-gradient(from 0deg, rgba(255,255,255,0.05) 0deg 10deg, transparent 10deg 20deg);
+  animation: rotate-rays 20s linear infinite;
+  opacity: 0;
 }
+.gacha-overlay.animate .god-rays { opacity: 1; transition: opacity 0.5s 0.5s; }
 
-/* MẶT ĐƯỜNG (FULL SIZE) */
-.road {
-  position: absolute; 
-  top: 50%; /* Bắt đầu từ giữa màn hình (chân trời) */
-  left: -100%; /* Kéo rộng ra 2 bên để che mép */
-  width: 300%; /* Rộng gấp 3 lần màn hình */
-  height: 200%; /* Dài miên man */
-  transform-origin: top center;
-  transform: rotateX(75deg); /* Nghiêng vừa phải để thấy mặt đường */
-  
-  /* Tạo texture đường dạng lưới kỹ thuật số */
-  background: 
-    linear-gradient(90deg, transparent 48%, rgba(255,255,255,0.03) 50%, transparent 52%), /* Vạch giữa */
-    repeating-linear-gradient(to bottom, #1f2937, #1f2937 40px, #111827 40px, #111827 42px); /* Các sọc ngang */
-  background-size: 100% 100%, 100% 42px;
-  mask-image: linear-gradient(to bottom, transparent 0%, black 20%); /* Làm mờ phần chân trời cho mượt */
+/* 3. Container chứa xe */
+.gacha-container {
+  position: relative; z-index: 10001; text-align: center;
+  transform: scale(0); opacity: 0;
 }
+.gacha-overlay.animate .gacha-container { animation: item-pop 0.6s cubic-bezier(0.17, 0.67, 0.35, 1.4) 0.6s forwards; }
 
-/* Animation đường chạy */
+.gacha-title { font-family: 'Orbitron'; font-size: 2rem; font-weight: 900; color: #fcd34d; text-shadow: 0 0 20px #fcd34d; margin-bottom: 20px; letter-spacing: 4px; }
+.gacha-car { 
+  width: 250px; height: 100px; margin: 0 auto 40px; 
+  background: linear-gradient(135deg, #fcd34d, #b45309);
+  border-radius: 20px; box-shadow: 0 0 60px rgba(234, 179, 8, 0.6);
+  position: relative;
+}
+.claim-btn { width: 200px; font-size: 1.2rem; box-shadow: 0 0 30px rgba(59, 130, 246, 0.5); animation: pulse-btn 1s infinite alternate; }
+
+/* KEYFRAMES */
+@keyframes flash-bang {
+  0% { opacity: 0; }
+  10% { opacity: 1; } /* BÙM */
+  100% { opacity: 0; }
+}
+@keyframes rotate-rays { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
+@keyframes item-pop { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes pulse-btn { from { transform: scale(1); } to { transform: scale(1.05); } }
+@keyframes pulse-glow { 0% { opacity: 0.3; transform: scale(0.9); } 100% { opacity: 0.6; transform: scale(1.1); } }
+
+/* CÁC CSS CŨ GIỮ NGUYÊN (Wrapper, Game Scene, etc.) */
+.wrapper { background: var(--panel-bg); width: 100%; max-width: 480px; padding: 30px; border-radius: 24px; box-shadow: 0 30px 60px -10px rgba(0, 0, 0, 0.6); border: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 20px; }
+.controls { display: flex; gap: 8px; }
+.icon-btn { background: transparent; border: 1px solid var(--border-color); color: var(--text-muted); width: 36px; height: 36px; border-radius: 8px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
+.game-scene { position: relative; width: 100%; height: 260px; background: radial-gradient(circle at 50% 30%, #2d3748 0%, #111 60%); border-radius: 16px; overflow: hidden; perspective: 400px; border: 1px solid var(--border-color); box-shadow: inset 0 0 50px rgba(0,0,0,0.9); }
+.tunnel { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform-style: preserve-3d; }
+.road { position: absolute; top: 50%; left: -100%; width: 300%; height: 200%; transform-origin: top center; transform: rotateX(75deg); background: linear-gradient(90deg, transparent 48%, rgba(255,255,255,0.03) 50%, transparent 52%), repeating-linear-gradient(to bottom, #1f2937, #1f2937 40px, #111827 40px, #111827 42px); background-size: 100% 100%, 100% 42px; mask-image: linear-gradient(to bottom, transparent 0%, black 20%); }
 .accelerating .road { animation: road-run 0.1s linear infinite; }
 @keyframes road-run { from { background-position-y: 0; } to { background-position-y: 42px; } }
-
-/* TRẦN HẦM (Tạo cảm giác không gian kín) */
-.game-scene::before {
-  content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 50%;
-  background: repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(255,255,255,0.02) 41px);
-  transform: rotateX(60deg); z-index: 1; pointer-events: none;
-}
-
-/* XE (Cân chỉnh lại vị trí) */
+.game-scene::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 50%; background: repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(255,255,255,0.02) 41px); transform: rotateX(60deg); z-index: 1; pointer-events: none; }
 .car-wrapper { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 10; }
-.car-mock { 
-  width: 150px; height: 65px; /* Xe to hơn xíu cho cân đối */
-  background: linear-gradient(180deg, #374151, #111827);
-  border-radius: 14px 14px 6px 6px; position: relative; 
-  box-shadow: 0 20px 40px rgba(0,0,0,0.8);
-  border-top: 1px solid rgba(255,255,255,0.1);
-}
+.car-mock { width: 150px; height: 65px; background: linear-gradient(180deg, #374151, #111827); border-radius: 14px 14px 6px 6px; position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.8); border-top: 1px solid rgba(255,255,255,0.1); }
 .accelerating .car-mock { animation: shake 0.08s infinite alternate; }
 .taillight { position: absolute; bottom: 12px; width: 24px; height: 6px; background: #ef4444; box-shadow: 0 0 20px #ef4444; border-radius: 4px; }
 .left { left: 14px; } .right { right: 14px; }
-
-/* HIỆU ỨNG ÁNH SÁNG KHI THẮNG */
-/* =========================================
-   HỆ THỐNG HIỆU ỨNG GLOW 2 GIAI ĐOẠN
-   ========================================= */
-
-/* --- GIAI ĐOẠN 1: CHARGING (Nạp năng lượng trắng) --- */
-/* Khi có class .accelerating, scene sẽ sáng trắng dần lên */
-.accelerating {
-  animation: charge-white 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  /* Dùng forwards để giữ lại trạng thái sáng nhất khi kết thúc 1.5s chờ */
-}
-
-@keyframes charge-white {
-  0% {
-    border-color: var(--border-color);
-    box-shadow: 0 0 0 rgba(255, 255, 255, 0);
-  }
-  100% {
-    /* Trạng thái "đầy cây" năng lượng trắng */
-    border-color: rgba(255, 255, 255, 0.8);
-    box-shadow: 0 0 50px rgba(255, 255, 255, 0.3), inset 0 0 20px rgba(255, 255, 255, 0.1);
-  }
-}
-
-/* --- GIAI ĐOẠN 2: RELEASE (Xả năng lượng ra màu kết quả) --- */
-
-/* 1. KẾT QUẢ +1 (Xanh dương): Từ trắng -> Xanh -> Tắt */
-.game-scene.res-blue {
-  animation: fade-to-blue 1s ease-out forwards;
-}
-
-@keyframes fade-to-blue {
-  0% {
-    /* Bắt đầu đúng bằng trạng thái kết thúc của charge-white */
-    border-color: rgba(255, 255, 255, 0.8);
-    box-shadow: 0 0 50px rgba(255, 255, 255, 0.3);
-  }
-  20% { /* Điểm nổ xanh dương */
-    border-color: var(--accent-cyan);
-    box-shadow: 0 0 60px rgba(6, 182, 212, 0.6), inset 0 0 40px rgba(6, 182, 212, 0.3);
-  }
-  100% { /* Tắt dần */
-    border-color: rgba(6, 182, 212, 0.3);
-    box-shadow: 0 0 10px rgba(6, 182, 212, 0);
-  }
-}
-
-/* 2. KẾT QUẢ +2/+3 (Vàng Gold): Từ trắng -> Vàng rực (có phóng to) -> Tắt */
-.game-scene.res-gold {
-  animation: fade-to-gold 1s ease-out forwards;
-  z-index: 50;
-}
-
-@keyframes fade-to-gold {
-  0% {
-    border-color: rgba(255, 255, 255, 0.8);
-    box-shadow: 0 0 50px rgba(255, 255, 255, 0.3);
-    transform: scale(1);
-  }
-  20% { /* Điểm nổ vàng siêu mạnh */
-    border-color: var(--accent-gold);
-    box-shadow: 0 0 80px rgba(234, 179, 8, 0.8), inset 0 0 60px rgba(234, 179, 8, 0.5);
-    transform: scale(1.02); /* Phóng to tạo lực */
-  }
-  100% {
-    border-color: rgba(234, 179, 8, 0.4);
-    box-shadow: 0 0 20px rgba(234, 179, 8, 0);
-    transform: scale(1);
-  }
-}
-
-/* 3. THẤT BẠI (Đỏ): Từ trắng -> Đỏ báo động -> Tắt */
-.game-scene.res-red {
-  animation: fade-to-red 0.8s ease-out forwards;
-}
-
-@keyframes fade-to-red {
-  0% {
-    border-color: rgba(255, 255, 255, 0.8);
-    box-shadow: 0 0 50px rgba(255, 255, 255, 0.3);
-  }
-  20% {
-    border-color: var(--accent-red);
-    box-shadow: 0 0 50px rgba(239, 68, 68, 0.6), inset 0 0 80px rgba(239, 68, 68, 0.2);
-  }
-  35% { border-color: #800; } /* Nháy nhẹ kiểu lỗi */
-  50% { border-color: var(--accent-red); }
-  100% {
-    border-color: rgba(239, 68, 68, 0.3);
-    box-shadow: 0 0 10px rgba(239, 68, 68, 0);
-  }
-}
-/* CÁC PHẦN KHÁC (RAIL, BUTTON, LOG) GIỮ NGUYÊN */
 .speed-display { position: absolute; top: 15px; width: 100%; text-align: center; font-family: 'Orbitron'; font-size: 5rem; font-weight: 900; color: #fff; text-shadow: 0 4px 20px rgba(0,0,0,0.5); z-index: 20; opacity: 0.9; }
-
 .rail-container { padding: 0 10px; margin: 5px 0 15px 0; }
 .rail-bg { height: 6px; background: #374151; border-radius: 3px; position: relative; }
 .rail-fill { height: 100%; width: 0; background: var(--accent-cyan); border-radius: 3px; transition: width 0.5s; box-shadow: 0 0 10px var(--accent-cyan); }
@@ -204,20 +123,16 @@ body {
 .dot.active { background: var(--accent-gold); border-color: #fff; box-shadow: 0 0 12px var(--accent-gold); transform: translate(-50%, -50%) scale(1.3); }
 .label { position: absolute; top: 22px; left: 50%; transform: translateX(-50%); font-size: 0.6rem; color: var(--text-muted); font-weight: 700; white-space: nowrap; font-family: 'Inter'; letter-spacing: 0.5px; }
 .dot.active .label { color: #fff; }
-
 .action-btn { width: 100%; padding: 16px; border-radius: 12px; font-weight: 700; border: none; cursor: pointer; transition: 0.2s; font-size: 0.95rem; letter-spacing: 0.5px; text-transform: uppercase; }
 .btn-primary { background: linear-gradient(135deg, #3b82f6, #2563eb); color: #fff; box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3); }
 .btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 15px rgba(59, 130, 246, 0.4); }
 .btn-secondary { background: rgba(255,255,255,0.08); color: var(--text-main); border: 1px solid rgba(255,255,255,0.1); }
 .btn-danger { background: rgba(239, 68, 68, 0.15); color: var(--accent-red); border: 1px solid rgba(239, 68, 68, 0.2); }
 button:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
-
 .log-container { background: #000; border-radius: 12px; padding: 15px; border: 1px solid var(--border-color); }
 .log-header { font-size: 0.7rem; color: #6b7280; text-transform: uppercase; font-weight: 700; margin-bottom: 8px; letter-spacing: 1px; }
 .log-box { height: 100px; overflow-y: auto; font-family: monospace; font-size: 0.8rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 5px; }
 .log-entry { display: flex; align-items: center; gap: 8px; }
-
-/* MODALS */
 .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.9); backdrop-filter: blur(5px); display: none; align-items: center; justify-content: center; z-index: 100; }
 .modal-overlay[aria-hidden="false"] { display: flex; animation: fadeIn 0.2s; }
 .modal-panel { background: var(--panel-bg); padding: 30px; border-radius: 20px; width: 90%; max-width: 400px; position: relative; border: 1px solid var(--border-color); box-shadow: 0 25px 50px rgba(0,0,0,0.8); }
@@ -227,6 +142,15 @@ button:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important;
 .reward-style { text-align: center; border: 2px solid var(--accent-gold); }
 .reward-sub { color: var(--text-muted); margin-top: -10px; margin-bottom: 20px; }
 .reward-item { font-size: 2.5rem; font-weight: 900; color: var(--accent-gold); margin-bottom: 30px; text-shadow: 0 0 20px rgba(234, 179, 8, 0.4); }
-
 @keyframes shake { 0% { transform: translate(0,0); } 100% { transform: translate(1px, 2px); } }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* GLOW EFFECTS (Giữ lại của ông nãy) */
+.accelerating { animation: charge-white 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+@keyframes charge-white { 0% { border-color: var(--border-color); box-shadow: 0 0 0 rgba(255, 255, 255, 0); } 100% { border-color: rgba(255, 255, 255, 0.8); box-shadow: 0 0 50px rgba(255, 255, 255, 0.3), inset 0 0 20px rgba(255, 255, 255, 0.1); } }
+.game-scene.res-blue { animation: fade-to-blue 1s ease-out forwards; }
+@keyframes fade-to-blue { 0% { border-color: rgba(255, 255, 255, 0.8); box-shadow: 0 0 50px rgba(255, 255, 255, 0.3); } 20% { border-color: var(--accent-cyan); box-shadow: 0 0 60px rgba(6, 182, 212, 0.6), inset 0 0 40px rgba(6, 182, 212, 0.3); } 100% { border-color: rgba(6, 182, 212, 0.3); box-shadow: 0 0 10px rgba(6, 182, 212, 0); } }
+.game-scene.res-gold { animation: fade-to-gold 1s ease-out forwards; z-index: 50; }
+@keyframes fade-to-gold { 0% { border-color: rgba(255, 255, 255, 0.8); box-shadow: 0 0 50px rgba(255, 255, 255, 0.3); transform: scale(1); } 20% { border-color: var(--accent-gold); box-shadow: 0 0 80px rgba(234, 179, 8, 0.8), inset 0 0 60px rgba(234, 179, 8, 0.5); transform: scale(1.02); } 100% { border-color: rgba(234, 179, 8, 0.4); box-shadow: 0 0 20px rgba(234, 179, 8, 0); transform: scale(1); } }
+.game-scene.res-red { animation: fade-to-red 0.8s ease-out forwards; }
+@keyframes fade-to-red { 0% { border-color: rgba(255, 255, 255, 0.8); box-shadow: 0 0 50px rgba(255, 255, 255, 0.3); } 20% { border-color: var(--accent-red); box-shadow: 0 0 50px rgba(239, 68, 68, 0.6), inset 0 0 80px rgba(239, 68, 68, 0.2); } 35% { border-color: #800; } 50% { border-color: var(--accent-red); } 100% { border-color: rgba(239, 68, 68, 0.3); box-shadow: 0 0 10px rgba(239, 68, 68, 0); } }

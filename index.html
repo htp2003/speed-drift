@@ -8,14 +8,42 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
+    <div id="gachaOverlay" class="gacha-overlay">
+      <div class="gacha-flash"></div>
+      <div class="god-rays"></div>
+      <div class="gacha-container">
+        <div class="gacha-title" id="gachaTitle">MYTHIC ITEM</div>
+        <div class="gacha-car" id="gachaCar">
+          <div class="car-body-gacha"></div>
+        </div>
+        <button class="btn-primary claim-btn" onclick="closeGacha()">EQUIP NOW</button>
+      </div>
+    </div>
+
     <div class="wrapper">
       <div class="header-bar">
-        <div class="uc-badge">Spent UC: <span id="uc-val">0</span></div>
-        <div class="controls">
-          <button class="icon-btn" id="soundToggle" onclick="toggleSound()" title="Sound">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+        <div class="badges">
+          <div class="uc-badge">UC: <span id="uc-val">0</span></div>
+          <div class="ticket-badge">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="color:#eab308"><path d="M4 4h16v16H4z" fill="none"/><path d="M20 6h-2.18c.11-.31.18-.65.18-1 0-1.66-1.34-3-3-3-1.66 0-3 1.34-3 3 0 .35.07.69.18 1H11.82C11.93 5.69 12 5.35 12 5c0-1.66-1.34-3-3-3-1.66 0-3 1.34-3 3 0 .35.07.69.18 1H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-5 6h-2v2h2v-2zm-8 0h2v2H7v-2zm0 4h2v2H7v-2zm8 0h-2v2h2v-2z"/></svg>
+            <span id="ticket-val">0</span>
+          </div>
+        </div>
+        
+       <div class="controls">
+          <button class="icon-btn shop-btn" onclick="openShop()" title="Redeem Shop">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-8 2a2 2 0 1 1 0 4 2 2 0 0 1 0-4z"/></svg>
           </button>
-          <button class="icon-btn" onclick="showInfo()" title="Info">
+          
+          <button class="icon-btn" id="animToggle" onclick="toggleAnimation()" title="Toggle Animation (Speed Mode)">
+             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+          </button>
+
+          <button class="icon-btn" id="soundToggle" onclick="toggleSound()">
+             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+          </button>
+          
+          <button class="icon-btn" onclick="showInfo()">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
           </button>
         </div>
@@ -25,7 +53,7 @@
         <div class="wind-overlay"></div>
         <div class="tunnel"><div class="road"></div></div>
         <div class="car-wrapper">
-          <div class="car-mock">
+          <div class="car-mock" id="mainCar">
             <div class="car-body"></div>
             <div class="taillight left"></div>
             <div class="taillight right"></div>
@@ -64,19 +92,43 @@
         <div class="log-box" id="logs"></div>
       </div>
 
+      <div class="modal-overlay" id="shopModal" aria-hidden="true">
+        <div class="modal-panel shop-panel">
+          <button class="close-icon" onclick="closeShop()">✕</button>
+          <h3>EXCHANGE SHOP</h3>
+          <div class="shop-grid">
+            <div class="shop-item">
+              <div class="item-preview car-1">
+                 <div class="mini-car"></div>
+              </div>
+              <div class="item-info">
+                <h4>Phantom Speed</h4>
+                <div class="price-tag">🎫 1 Ticket</div>
+                <button class="btn-primary shop-btn-action" onclick="redeemItem(1, 'Phantom Speed')">EXCHANGE</button>
+              </div>
+            </div>
+            <div class="shop-item highlight">
+              <div class="item-preview car-3">
+                 <div class="mini-car gold"></div>
+                 <div class="effect-glow"></div>
+              </div>
+              <div class="item-info">
+                <h4>Golden Dragon</h4>
+                <div class="price-tag gold">🎫 3 Tickets</div>
+                <button class="btn-primary shop-btn-action gold-btn" onclick="redeemItem(3, 'Golden Dragon')">EXCHANGE</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="modal-overlay" id="infoModal" aria-hidden="true">
         <div class="modal-panel">
           <button class="close-icon" onclick="hideInfo()">✕</button>
           <h3>GAME RULES</h3>
-          <ul>
-            <li><strong>Start:</strong> Cost 60 UC to launch.</li>
-            <li><strong>Safe Accel:</strong> Pay UC to protect progress. Guaranteed win after 3 fails.</li>
-            <li><strong>Free Accel:</strong> No cost, but failure resets to 0.</li>
-            <li><strong>Jumps:</strong> Chance to skip +1, +2 or +3 levels.</li>
-          </ul>
+          <ul><li>... (Giữ nguyên) ...</li></ul>
         </div>
       </div>
-
       <div class="modal-overlay" id="rewardModal" aria-hidden="true">
         <div class="modal-panel reward-style">
           <h2>🎉 SUCCESS!</h2>
@@ -90,7 +142,6 @@
     <audio id="accelSound" preload="auto"><source src="./sounds/accel_sound.m4a" type="audio/mp4" /></audio>
     <audio id="successSound" preload="auto"><source src="./sounds/success_sound.m4a" type="audio/mp4" /></audio>
     <audio id="failureSound" preload="auto"><source src="./sounds/failure_sound.m4a" type="audio/mp4" /></audio>
-
     <script src="app.js"></script>
   </body>
 </html>
